@@ -7,18 +7,36 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
+# Node modules (both backend and frontend)
+node_modules/
+backend/express_server/node_modules/
+frontend/node_modules/
+
+# Build folders
+dist/
+dist-ssr/
+build/
+.cache/
+
+# Environment files
+.env
 *.local
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# Python / Flask
+__pycache__/
+*.pyc
+instance/
+
+# Optional: ignore frontend nested repo if separate
+# frontend/
