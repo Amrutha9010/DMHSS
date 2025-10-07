@@ -9,79 +9,144 @@ const Resources = () => {
 
   // Sample resources data
   const resourcesData = [
-    {
-      id: 1,
-      title: "Breathing Exercise Guide",
-      description: "Learn simple breathing techniques to reduce anxiety and stress in minutes.",
-      category: "exercises",
-      type: "pdf",
-      duration: "5 min",
-      icon: "🧘‍♀️"
-    },
-    {
-      id: 2,
-      title: "Mindfulness Meditation",
-      description: "Guided meditation sessions for beginners to practice mindfulness.",
-      category: "meditation",
-      type: "audio",
-      duration: "15 min",
-      icon: "🎧"
-    },
-    {
-      id: 3,
-      title: "Stress Management Tips",
-      description: "Practical strategies to manage academic stress and pressure.",
-      category: "articles",
-      type: "article",
-      duration: "10 min",
-      icon: "📝"
-    },
-    {
-      id: 4,
-      title: "Sleep Better Tonight",
-      description: "Techniques to improve sleep quality and overcome insomnia.",
-      category: "sleep",
-      type: "video",
-      duration: "12 min",
-      icon: "😴"
-    },
-    {
-      id: 5,
-      title: "Progressive Muscle Relaxation",
-      description: "Step-by-step guide to release tension throughout your body.",
-      category: "exercises",
-      type: "video",
-      duration: "8 min",
-      icon: "💆‍♂️"
-    },
-    {
-      id: 6,
-      title: "Coping with Anxiety",
-      description: "Understanding anxiety triggers and developing healthy coping mechanisms.",
-      category: "articles",
-      type: "pdf",
-      duration: "15 min",
-      icon: "📚"
-    },
-    {
-      id: 7,
-      title: "Yoga for Stress Relief",
-      description: "Gentle yoga sequences specifically designed to reduce stress.",
-      category: "exercises",
-      type: "video",
-      duration: "20 min",
-      icon: "🧘"
-    },
-    {
-      id: 8,
-      title: "Positive Affirmations",
-      description: "Daily affirmations to boost self-esteem and mental wellbeing.",
-      category: "meditation",
-      type: "audio",
-      duration: "5 min",
-      icon: "🌟"
-    }
-  ];
+  // 🌬️ Breathing & Relaxation
+  {
+    id: 1,
+    title: "5-Minute Deep Breathing Exercise",
+    description: "Follow this guided video to calm your mind and body quickly.",
+    category: "exercises",
+    type: "video",
+    duration: "5 min",
+    link: "https://www.youtube.com/watch?v=O-6f5wQXSu8",
+    icon: "🧘‍♀️"
+  },
+  {
+    id: 2,
+    title: "Progressive Muscle Relaxation",
+    description: "A full-body relaxation routine to relieve tension.",
+    category: "exercises",
+    type: "video",
+    duration: "8 min",
+    link: "https://www.youtube.com/watch?v=86HUcX8ZtAk",
+    icon: "💆‍♂️"
+  },
+  {
+    id: 3,
+    title: "Managing Exam Stress - Free PDF",
+    description: "Download this quick guide on staying calm and focused during exams.",
+    category: "articles",
+    type: "pdf",
+    duration: "10 min",
+    link: "/resources/managing_exam_stress.pdf", // (you can store in public/resources)
+    icon: "📄"
+  },
+
+  // 🧘‍♂️ Meditation
+  {
+    id: 4,
+    title: "Mindfulness Meditation for Beginners",
+    description: "Start your day with a peaceful 10-minute mindfulness practice.",
+    category: "meditation",
+    type: "video",
+    duration: "10 min",
+    link: "https://www.youtube.com/watch?v=inpok4MKVLM",
+    icon: "🎧"
+  },
+  {
+    id: 5,
+    title: "Positive Affirmations Audio",
+    description: "Boost your confidence and self-esteem with daily affirmations.",
+    category: "meditation",
+    type: "audio",
+    duration: "6 min",
+    link: "https://www.youtube.com/watch?v=7kZ-3GzdhXU",
+    icon: "🌟"
+  },
+
+  // 😴 Sleep
+  {
+    id: 6,
+    title: "Sleep Better Tonight",
+    description: "Tips and techniques to improve your sleep quality.",
+    category: "sleep",
+    type: "video",
+    duration: "12 min",
+    link: "https://www.youtube.com/watch?v=1cgUxg_nV74",
+    icon: "😴"
+  },
+  {
+    id: 7,
+    title: "Guided Sleep Meditation",
+    description: "Drift into restful sleep with this relaxing bedtime meditation.",
+    category: "sleep",
+    type: "video",
+    duration: "15 min",
+    link: "https://www.youtube.com/watch?v=MIr3RsUWrdo",
+    icon: "🌙"
+  },
+
+  // 📚 Articles & Guides
+  {
+    id: 8,
+    title: "Understanding Anxiety - WHO Article",
+    description: "Read how anxiety affects students and ways to manage it effectively.",
+    category: "articles",
+    type: "article",
+    duration: "8 min",
+    link: "https://www.who.int/news-room/questions-and-answers/item/anxiety",
+    icon: "📰"
+  },
+  {
+    id: 9,
+    title: "Healthy Sleep Habits (PDF)",
+    description: "A practical guide to better sleep and mental wellbeing.",
+    category: "articles",
+    type: "pdf",
+    duration: "10 min",
+    link: "/resources/healthy_sleep_habits.pdf",
+    icon: "🛌"
+  },
+  {
+    id: 10,
+    title: "How to Stay Motivated During Studies",
+    description: "Simple psychological tips to build discipline and stay focused.",
+    category: "articles",
+    type: "article",
+    duration: "7 min",
+    link: "https://psychcentral.com/health/how-to-stay-motivated-when-studying",
+    icon: "🧩"
+  },
+
+  // ❓ FAQs / Quick Help
+  {
+    id: 11,
+    title: "How to Calm Down During a Panic Attack?",
+    description: "Try the 5-4-3-2-1 grounding technique: focus on things you can see, touch, hear, smell, and taste.",
+    category: "articles",
+    type: "faq",
+    duration: "2 min",
+    icon: "❓"
+  },
+  {
+    id: 12,
+    title: "What to Do When I Can’t Focus?",
+    description: "Take a 5-minute break, stretch, and return with a timer set for 25 minutes of focused study.",
+    category: "articles",
+    type: "faq",
+    duration: "3 min",
+    icon: "💡"
+  },
+  {
+    id: 13,
+    title: "Who Can I Talk to if I Feel Low?",
+    description: "Reach out to your campus counselor or call NIMHANS helpline: 080-46110007.",
+    category: "articles",
+    type: "faq",
+    duration: "1 min",
+    icon: "☎️"
+  }
+];
+
 
   // Filter resources based on active category
   useEffect(() => {
@@ -193,7 +258,13 @@ const Resources = () => {
                   <p className="resources-card-description">{resource.description}</p>
                   <div className="resources-card-footer">
                     <span className="resources-card-duration">{resource.duration}</span>
-                    <button className="resources-card-button">Explore</button>
+                    <button 
+                      className="resources-card-button" 
+                      onClick={() => window.open(resource.link, '_blank')}
+                    >
+                      Explore
+                    </button>
+
                   </div>
                 </div>
               ))}
