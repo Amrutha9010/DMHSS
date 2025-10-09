@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { Heart, Phone } from 'lucide-react';
 import './Chatbot.css';
 
 const ChatbotPage = () => {
@@ -6,7 +7,7 @@ const ChatbotPage = () => {
     {
       id: 1,
       type: 'bot',
-      text: 'Hello! I\'m here to support you. How are you feeling today?',
+      text: "Hello! I'm here to support you. How are you feeling today?",
       timestamp: new Date()
     }
   ]);
@@ -22,14 +23,6 @@ const ChatbotPage = () => {
     'Anxiety Help'
   ];
 
-  const botResponses = {
-    'exam stress': 'Exam stress is completely normal. Try the 4-7-8 breathing technique: inhale for 4, hold for 7, exhale for 8. Would you like me to guide you through this?',
-    'sleep issues': 'Sleep troubles can increase stress. Try creating a bedtime routine: no screens 1 hour before bed, dim lights, and perhaps some gentle music. What time do you usually go to bed?',
-    'motivation': 'Remember, every small step counts! Break your tasks into tiny, manageable pieces. Celebrate each completion - you\'re doing better than you think. What\'s one small thing you can accomplish today?',
-    'anxiety help': 'Anxiety can feel overwhelming, but you\'re not alone. Try the 5-4-3-2-1 grounding technique: 5 things you see, 4 you can touch, 3 you hear, 2 you smell, 1 you taste. Take your time.',
-    'default': 'I understand you\'re going through something difficult. Remember, it\'s okay to not be okay sometimes. Take deep breaths and be kind to yourself. Can you tell me more about what\'s bothering you?'
-  };
-
   const scrollToBottom = () => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -38,22 +31,7 @@ const ChatbotPage = () => {
     scrollToBottom();
   }, [messages]);
 
-  const getBotResponse = (userMessage) => {
-    const message = userMessage.toLowerCase();
-    
-    if (message.includes('exam') || message.includes('test') || message.includes('study')) {
-      return botResponses['exam stress'];
-    } else if (message.includes('sleep') || message.includes('tired') || message.includes('insomnia')) {
-      return botResponses['sleep issues'];
-    } else if (message.includes('motivat') || message.includes('give up') || message.includes('lazy')) {
-      return botResponses['motivation'];
-    } else if (message.includes('anxious') || message.includes('anxiety') || message.includes('worried')) {
-      return botResponses['anxiety help'];
-    } else {
-      return botResponses['default'];
-    }
-  };
-
+  // ✅ Send message to Flask backend
   const sendMessage = async (text) => {
     if (!text.trim()) return;
 
@@ -68,18 +46,38 @@ const ChatbotPage = () => {
     setInputText('');
     setIsTyping(true);
 
-    // Simulate bot typing delay
-    setTimeout(() => {
+    try {
+      // Call Flask API
+      const response = await fetch('http://127.0.0.1:5000/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text })
+      });
+
+      const data = await response.json();
+
       const botResponse = {
         id: Date.now() + 1,
         type: 'bot',
-        text: getBotResponse(text),
+        text: data.reply || "I'm here for you — could you tell me more?",
         timestamp: new Date()
       };
-      
+
       setMessages(prev => [...prev, botResponse]);
+    } catch (error) {
+      console.error('Error connecting to chatbot:', error);
+      setMessages(prev => [
+        ...prev,
+        {
+          id: Date.now() + 2,
+          type: 'bot',
+          text: "⚠️ I’m having trouble connecting to the server. Please try again later.",
+          timestamp: new Date()
+        }
+      ]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   const handleSubmit = (e) => {
@@ -101,9 +99,10 @@ const ChatbotPage = () => {
             <span>MindCare</span>
           </div>
           <nav className="nav">
-            <a href="/chatbot" className="nav-link">Support</a>
-            <a href="#resources" className="nav-link">Resources</a>
-            <a href="#community" className="nav-link">Community</a>
+            {/* <a href="/chatbot" className="nav-link">Support</a> */}
+            <a href="/" className="nav-link">Home</a>
+            <a href="/resources" className="nav-link">Resources</a>
+            <a href="/booking" className="nav-link">Book Session</a>
             <button className="emergency-btn">
               <Phone size={18} />
               Emergency Help

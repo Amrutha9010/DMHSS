@@ -187,7 +187,7 @@ const Resources = () => {
             <a href="/" className="nav-link">Home</a>
             <a href="/chatbot" className="nav-link">Support</a>
             {/* <a href="/resources" className="nav-link">Resources</a> */}
-            <a href="#community" className="nav-link">Community</a>
+            <a href="/booking" className="nav-link">Book Session</a>
             <button className="emergency-btn">
               <Phone size={18} />
               Emergency Help

@@ -294,10 +294,14 @@
   font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
+  text-decoration: none;
   transition: all 0.3s ease;
 }
-
-.secondary-btn:hover {
+.secondary-btn a{
+  text-decoration: none;
+  color: #EA3546;
+}
+.secondary-btn a:hover {
   background: #EA3546;
   color: white;
   transform: translateY(-3px);

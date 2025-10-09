@@ -3,104 +3,121 @@ from flask_cors import CORS
 from transformers import pipeline
 import datetime
 
-# Initialize Flask
+# Initialize Flask app
 app = Flask(__name__)
 CORS(app)
 
-# Load your saved model (from Drive or local copy)
-# Example: model saved locally inside 'saved_model/' folder
-MODEL_PATH = "./saved_model"  # change if needed
+# Path to your local model folder
+MODEL_PATH = "./mental_health_chatbot_model"
 
+# Load model
 try:
     emotion_classifier = pipeline(
         "text-classification",
-        model="bhadresh-savani/distilbert-base-uncased-emotion",
+        model=MODEL_PATH,
+        tokenizer=MODEL_PATH,
         return_all_scores=True
     )
-    print("✅ Model loaded successfully")
+    print(f"✅ Model loaded successfully from: {MODEL_PATH}")
 except Exception as e:
-    print("⚠️ Error loading model:", e)
+    print(f"⚠️ Error loading model: {e}")
+    emotion_classifier = None
 
-# Storage
+# Store logs and counters
 emotion_log = []
 depression_counter = 0
 
-# Coping tips
+# Coping tips dictionary
 coping_tips = {
     "depressed": [
-        "Try writing your thoughts in a journal 📝.",
-        "Listen to calming music 🎶.",
-        "Reach out to a close friend or family member 💬."
+        "Try writing your thoughts in a journal 📝",
+        "Listen to calm music 🎶 or go for a short walk 🚶",
+        "Reach out to someone you trust 💬"
     ],
     "anxiety": [
-        "Practice deep breathing for 5 minutes 🌬️.",
-        "Try meditation or mindfulness 🧘.",
-        "Write down your worries and let them go ✨."
+        "Practice deep breathing for 5 minutes 🌬️",
+        "Try mindfulness or short meditation 🧘",
+        "Write down your worries and let them go ✨"
     ],
     "stress": [
-        "Take a short walk outside 🚶.",
-        "Do some light exercise or stretching 🏋️.",
-        "Give yourself a break and rest ☕."
+        "Take a short walk outside 🌤️",
+        "Stretch or do light exercise 🏋️",
+        "Drink some water and take a break ☕"
     ],
     "happy": [
-        "Share your happiness with someone you care about 💚.",
-        "Keep a gratitude journal ✨.",
-        "Celebrate your small wins 🎉."
+        "Share your happiness with someone 💚",
+        "Keep a gratitude journal ✨",
+        "Celebrate your small wins 🎉"
     ]
 }
 
-# Crisis phrases
-crisis_keywords = ["suicide", "kill myself", "end my life", "i want to die", "no reason to live"]
+# Crisis detection keywords
+crisis_keywords = [
+    "suicide", "kill myself", "end my life",
+    "i want to die", "no reason to live", "can't go on"
+]
 
-# Core logic
+
+# Core chatbot logic
 def mental_health_bot(user_input):
     global depression_counter
+
     user_input_lower = user_input.lower()
 
+    # Crisis detection
     if any(phrase in user_input_lower for phrase in crisis_keywords):
         return (
-            "⚠️ I hear you’re in deep pain. You are not alone. 💙\n"
-            "Please reach out for immediate help:\n"
-            "- 📞 India: 1800-599-0019 (KIRAN Mental Health Helpline)\n"
+            "⚠️ It sounds like you're in deep distress. Please know you're **not alone** 💙\n"
+            "If you are in danger or need help right now:\n"
+            "- 📞 India: 1800-599-0019 (KIRAN Helpline)\n"
             "- 📞 USA: 988 (Suicide & Crisis Lifeline)\n"
-            "- 🌍 Other countries: Find helplines at https://findahelpline.com\n\n"
-            "Talking to a trusted friend, family member, or counselor right now can make a huge difference."
+            "- 🌍 Find other helplines: https://findahelpline.com\n\n"
+            "Please reach out to someone you trust — it can make a huge difference 💙"
         )
 
-    if "hi" in user_input_lower or "hello" in user_input_lower:
-        return "Hi! I’m here to listen. How are you feeling today?"
+    # Greetings
+    if any(word in user_input_lower for word in ["hi", "hello", "hey"]):
+        return "Hi there! 👋 I’m here to listen. How are you feeling today?"
 
+    # Check model
+    if not emotion_classifier:
+        return "⚠️ The model could not be loaded. Please check the server."
+
+    # Run emotion prediction
     results = emotion_classifier(user_input)[0]
     results = sorted(results, key=lambda x: x["score"], reverse=True)
     top_emotion = results[0]["label"]
     confidence = results[0]["score"]
 
+    # Generate response
     if top_emotion == "sadness":
         condition = "depressed"
-        response = "It sounds like you may be feeling **depressed** 💙. Remember, you’re not alone."
+        response = "It seems you’re feeling **down** 💙. You’re not alone — it’s okay to feel this way."
         depression_counter += 1
     elif top_emotion == "fear":
         condition = "anxiety"
-        response = "I sense some **anxiety** 🌱. It’s okay to take small steps to calm your mind."
+        response = "I sense some **anxiety** 🌱. Try to take slow, deep breaths — you got this."
         depression_counter = 0
     elif top_emotion == "anger":
         condition = "stress"
-        response = "You seem **stressed** or frustrated 😔. Taking breaks and self-care can help."
+        response = "You seem a bit **stressed** 😔. Taking short breaks or talking it out might help."
         depression_counter = 0
     elif top_emotion == "joy":
         condition = "happy"
-        response = "I’m glad you’re feeling **happy** today! 😊"
+        response = "I’m so glad you’re feeling **happy** today! 😊"
         depression_counter = 0
     else:
         condition = "neutral"
-        response = "Thanks for sharing your feelings. It’s healthy to express them."
+        response = "Thanks for sharing your thoughts. It’s good to express how you feel."
         depression_counter = 0
 
+    # Add coping tips
     if condition in coping_tips:
-        response += "\n👉 Here are a few suggestions you could try:\n"
+        response += "\n\nHere are some things that might help:\n"
         for tip in coping_tips[condition]:
             response += f"- {tip}\n"
 
+    # Log the message
     emotion_log.append({
         "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "input": user_input,
@@ -108,27 +125,41 @@ def mental_health_bot(user_input):
         "confidence": round(confidence, 2)
     })
 
+    # Repeated sadness warning
     if depression_counter >= 3:
         response += (
-            "\n⚠️ I notice you’ve been feeling **depressed repeatedly**. "
-            "It may help to connect with a **professional counselor**.\n"
-            "👉 Please visit our **Counselor Support Page** on this website to chat with a counselor directly. 💙"
+            "\n⚠️ I’ve noticed you’ve been feeling **sad** repeatedly. "
+            "It might help to talk to a counselor 💙. "
+            "You can visit our **Counselor Support Page** for help."
         )
         depression_counter = 0
 
-    response += "\n💭 Would you like to share more about what’s on your mind?"
+    response += "\n\n💭 Would you like to share more about what’s on your mind?"
     return response
 
-# Flask route
+
+# Root route — prevents "Not Found" error
+@app.route("/", methods=["GET"])
+def home():
+    return jsonify({
+        "message": "🌿 Mental Health Chatbot API is running! Use POST /chat to talk to the bot."
+    })
+
+
+# Chat route
 @app.route("/chat", methods=["POST"])
 def chat():
     data = request.get_json()
     user_message = data.get("message", "")
     if not user_message:
-        return jsonify({"reply": "Please type a message."}), 400
+        return jsonify({"reply": "Please type something to begin."}), 400
 
     bot_reply = mental_health_bot(user_message)
     return jsonify({"reply": bot_reply})
 
+
+# Run Flask app
 if __name__ == "__main__":
     app.run(debug=True)
+    
+    
